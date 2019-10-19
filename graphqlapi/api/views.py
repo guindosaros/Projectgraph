@@ -17,7 +17,7 @@ def detail(request):
 
 
 
-def ingredient(request):
+def ingredient(request,pk):
     data={}
     
     

@@ -21,14 +21,76 @@
         var app = new Vue({
             el: '#app',
             data: {
-            
+                dataallcategorie:[],
+                dataallingredienbycategory:[],
+                datasinglecategory:[],
+                base_url:'http://127.0.0.1:8000/',
+                categorie_id='',
             },
             delimiters:["${","}"],
             mounted(){
-            
+            this.getdata();
+            this.categorie_id="{{pk}}"
             },
             methods: {
+                getdata: function(){
+                    this.base_url = 'http://127.0.0.1:8000'
+                    console.log('data getting')
+                    axios.defaults.xsrfCookieName = 'csrftoken'
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+            
+
+                    axios({
+                        url: this.base_url + '/graphql',
+                        method: 'post',
+                        data: {
+                            query: `
+                                query{
+                                    allCategories(first:5){
+                                        edges{
+                                        node{
+                                            id,
+                                            name,
+                                        }
+                                        }
+                                    },
+                                    category(id:"Q2F0ZWdvcnlOb2RlOjQ="){
+                                        name,
+                                        ingredients{
+                                        edges{
+                                            node{
+                                            id,
+                                            name,
+                                            }
+                                        }
+                                        }
+            
+                                    },
+                                    ingredient(id:"SW5ncmVkaWVudE5vZGU6MTY="){
+                                        name,
+                                        category{
+                                        name,
+                                        }
+                                    }
+                                    }
+                            `
+                        }
+                    })
+                    .then(response => {
+            
+                        result=response.data.data
+                        this.dataallcategorie = result.allCategories.edges
+                        console.log(result);
+                        console.log(this.dataallcategorie)
+                    
                 
+                
+                    })  
+                    .catch((err) => {
+            
+                        console.log(err);
+                    })
+                },
             }
             })
 
